@@ -10,28 +10,35 @@ spec:
     - name: pihole
       image: pihole/pihole:latest
       env:
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: MYAPP
-              key: DB_HOST
+        - name: TZ
+          value: Europe/Amsterdam
+        - name: VIRTUAL_HOST
+          value: pihole.lab.javydekoning.com
+        - name: WEBPASSWORD
+          value: NotMyPassword
       ports:
         - containerPort: 80 #Admin interface
         - containerPort: 53 #DNS
-      restartPolicy: UnlessStopped
       resources:
         limits:
           cpu: 200m
           memory: 500Mi
       volumeMounts:
-        - name: dnsmasq
+        - name: etc-dnsmasq
           mountPath: /etc/dnsmasq.d/
+        - name: etc-pihole
+          mountPath: /etc/pihole/
   # These containers are run during pod initialization
   initContainers:
     - name: clone
-      image: alpine/git
-      command:
-        - git clone https://github.com/javydekoning/homelab-pihole-k8s.git
+      image: alpine:latest
+      command: ["/bin/ash"]
+      args:
+        - -c
+        - >-
+          apk add git --no-cache &&
+          git clone https://github.com/javydekoning/homelab-pihole-k8s.git &&
+          mv homelab-pihole-k8s/etc-dnsmasq.d/*.conf /dnsmasq/
       volumeMounts:
         - name: etc-dnsmasq
           mountPath: /dnsmasq
@@ -41,3 +48,4 @@ spec:
       emptyDir: {}
     - name: etc-dnsmasq
       emptyDir: {}
+  restartPolicy: OnFailure
