@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  namespace: default
+  labels:
+    app: pihole
+spec:
+  selector:
+    matchLabels:
+      app: pihole
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      initContainers:
+        - name: clone
+          image: alpine:latest
+          command: ["/bin/ash"]
+          args:
+            - -c
+            - >-
+              apk add git --no-cache &&
+              git clone https://github.com/javydekoning/homelab-pihole-k8s.git &&
+              mv homelab-pihole-k8s/etc-dnsmasq.d/*.conf /dnsmasq/
+          volumeMounts:
+            - name: etc-dnsmasq
+              mountPath: /dnsmasq
+      containers:
+        - name: pihole
+          image: pihole/pihole:latest
+          env:
+            - name: TZ
+              value: Europe/Amsterdam
+            - name: VIRTUAL_HOST
+              value: pihole.lab.javydekoning.com
+            - name: WEBPASSWORD
+              value: NotMyPassword
+          ports:
+            - containerPort: 80 #Admin interface
+            - containerPort: 53 #DNS
+          resources:
+            limits:
+              cpu: 200m
+              memory: 500Mi
+          volumeMounts:
+            - name: etc-dnsmasq
+              mountPath: /etc/dnsmasq.d/
+            - name: etc-pihole
+              mountPath: /etc/pihole/
+      volumes:
+        - name: etc-pihole
+          emptyDir: {}
+        - name: etc-dnsmasq
+          emptyDir: {}
+      restartPolicy: Always
+      dnsConfig:
+        nameservers:
+          - 1.1.1.1
