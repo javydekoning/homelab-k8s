@@ -54,15 +54,11 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
-            - name: VIRTUAL_HOST
-              value: pihole.lab.javydekoning.com
-            - name: WEBPASSWORD
-              value: NotMyPassword
           ports:
-            - containerPort: 80 #Admin interface
-            - containerPort: 5000 #DNS
-            - containerPort: 51413 #DNS
-            - containerPort: 6881 #DNS
+            - containerPort: 80 # interface
+            - containerPort: 5000 # scgi
+            - containerPort: 51413
+            - containerPort: 6881
           volumeMounts:
             - name: config
               mountPath: /config/
