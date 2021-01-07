@@ -1,42 +1,29 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: rutorrent
+  name: radarr
   namespace: default
 spec:
   selector:
-    app: rutorrent
+    app: radarr
   type: ClusterIP
-  clusterIP: 10.96.0.3
   ports:
     - name: http
       port: 80
-      targetPort: 80
+      targetPort: 7878
       protocol: TCP
-    - name: scgi
-      port: 5000
-      targetPort: 5000
-      protocol: TCP
-    - name: torrent-tcp
-      port: 51413
-      targetPort: 51413
-      protocol: TCP
-    - name: torrent-udp
-      port: 6881
-      targetPort: 6881
-      protocol: UDP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rutorrent
+  name: radarr
   namespace: default
   labels:
-    app: rutorrent
+    app: radarr
 spec:
   selector:
     matchLabels:
-      app: rutorrent
+      app: radarr
   replicas: 1
   strategy:
     rollingUpdate:
@@ -46,23 +33,23 @@ spec:
   template:
     metadata:
       labels:
-        app: rutorrent
+        app: radarr
     spec:
       containers:
-        - name: rutorrent
-          image: ghcr.io/linuxserver/rutorrent
+        - name: radarr
+          image: ghcr.io/linuxserver/radarr
           env:
             - name: TZ
               value: Europe/Amsterdam
           ports:
-            - containerPort: 80 # interface
-            - containerPort: 5000 # scgi
-            - containerPort: 51413
-            - containerPort: 6881
+            - containerPort: 7878 # interface
           volumeMounts:
             - name: nfs
               mountPath: /config/
-              subPath: config
+              subPath: config/radarr
+            - name: nfs
+              mountPath: /movies/
+              subPath: movies
             - name: nfs
               mountPath: /downloads/
       volumes:
