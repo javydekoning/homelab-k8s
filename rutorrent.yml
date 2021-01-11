@@ -54,22 +54,26 @@ spec:
           env:
             - name: TZ
               value: Europe/Amsterdam
+            - name: PUID
+              value: "911"
+            - name: PGID
+              value: "911"
           ports:
             - containerPort: 80 # interface
             - containerPort: 5000 # scgi
             - containerPort: 51413
             - containerPort: 6881
           volumeMounts:
-            - name: nfs
+            - name: downloads
               mountPath: /config/
               subPath: config
-            - name: nfs
+            - name: downloads
               mountPath: /downloads/
       volumes:
-        - name: nfs
-          nfs:
-            server: 192.168.1.9
-            path: /
+        - name: downloads
+          hostPath:
+            path: /downloads
+            type: DirectoryOrCreate
       restartPolicy: Always
       dnsConfig:
         nameservers:

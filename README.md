@@ -4,23 +4,43 @@ Repo for my k8s homelab. Currently running in a single-node minikube (`driver=do
 
 ## Notes
 
-A few things are important to setup when running in minikube: 
+A few things are important to setup routing and ingress when running in minikube.
 
-- Enable ingress add-on
-  - `minikube addons enable ingress` 
-- your default gateway (router) needs to send ICMP Redirect to host for cluster network (and minikube address)
-  - `minikube ip`
-  - `cat ~/.minikube/profiles/minikube/config.json | jq -r ".KubernetesConfig.ServiceCIDR"`
-- you might need to add a route to your host route table
-  - `ip route add <ServiceCIDR> via <minikube ip>` 
-- ip forwarding needs to be enabled on the host.
+To start with host mount:
 
 ```sh
+minikube start --force --mount-string "/srv/docker/downloads/:/downloads" --mount
+```
+
+To get routing addresses of Minikube container and k8s Service CIDS:
+
+```sh
+minikube ip
+cat ~/.minikube/profiles/minikube/config.json | jq -r ".KubernetesConfig.ServiceCIDR"
+```
+
+Setup routing and enable ingress:
+
+```sh
+ip route add <ServiceCIDR> via <minikube ip>
+minikube addons enable ingress
 echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf
 sysctl -p
 
 iptables -A FORWARD -i eth0 -j ACCEPT
 ```
+
+## permissions 
+
+Ensure any volume directories on the host are owned by the same user you specify and any permissions issues will vanish like magic.
+
+In this instance I'm using `PUID=911` and `PGID=911`. Create a user/group with those id's:
+
+`adduser --uid 911 k8s`
+
+## Plex discovery
+
+Don't forget to set `Custom server access URLs` and `List of IP addresses and networks that are allowed without auth` in Plex Media Server network settings. Otherwise Plex apps might not connect to PMS.
 
 ## Blog
 
