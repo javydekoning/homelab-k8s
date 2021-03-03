@@ -1,0 +1,82 @@
+{
+  "interfaces": {
+    "ethernet": {
+      "eth0": {
+        "description": "eth0 - FTTH",
+        "duplex": "auto",
+        "speed": "auto",
+        "vif": {
+          "6": {
+            "description": "eth0.6 - Internet",
+            "firewall": {
+              "in": {
+                "name": "WAN_IN"
+              },
+              "local": {
+                "name": "WAN_LOCAL"
+              },
+              "out": {
+                "name": "WAN_OUT"
+              }
+            },
+            "pppoe": {
+              "2": {
+                "default-route": "auto",
+                "firewall": {
+                  "in": {
+                    "name": "WAN_IN"
+                  },
+                  "local": {
+                    "name": "WAN_LOCAL"
+                  },
+                  "out": {
+                    "name": "WAN_OUT"
+                  }
+                },
+                "mtu": "1492",
+                "name-server": "none",
+                "password": "kpn",
+                "user-id": "XX-XX-XX-XX-XX-XX@internet"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "protocols": {
+    "static": {
+      "interface-route": {
+        "0.0.0.0/0": {
+          "next-hop-interface": {
+            "pppoe2": {
+              "distance": "1"
+            }
+          }
+        }
+      },
+      "route": {
+        "10.96.0.0/12": {
+          "next-hop": {
+            "192.168.1.9": {
+              "distance": 1
+            }
+          }
+        },
+        "192.168.49.0/24": {
+          "next-hop": {
+            "192.168.1.9": {
+              "distance": 1
+            }
+          }
+        }
+      }
+    }
+  },
+  "port-forward": {
+    "auto-firewall": "enable",
+    "hairpin-nat": "enable",
+    "lan-interface": ["eth1"],
+    "wan-interface": "pppoe2"
+  }
+}

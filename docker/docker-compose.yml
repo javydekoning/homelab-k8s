@@ -1,0 +1,36 @@
+version: "3.7"
+
+networks:
+  homelan:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+
+services:
+  #https://github.com/linuxserver/docker-unifi-controller
+  unifi-controller:
+    networks:
+      homelan:
+        ipv4_address: 192.168.1.254
+    image: ghcr.io/linuxserver/unifi-controller
+    container_name: unifi-controller
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MEM_LIMIT=1024M #optional
+    volumes:
+      - ./unify:/config
+    ports:
+      - 3478:3478/udp
+      - 10001:10001/udp
+      - 8080:8080
+      - 8443:8443
+      - 1900:1900/udp
+      - 8843:8843
+      - 8880:8880
+      - 6789:6789
+      - 5514:5514/udp
+    restart: unless-stopped
