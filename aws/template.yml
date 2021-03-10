@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Cloud Formation Template to connect homelab to TGW
+#Parameters:
+Resources:
+    MyTGW:
+        Type: AWS::EC2::TransitGateway
+        Properties:
+            AutoAcceptSharedAttachments: enable
+            DefaultRouteTableAssociation: enable
+            DefaultRouteTablePropagation: enable
+            Description: NamingThisMakesItFasterRight
+            DnsSupport: enable
+            MulticastSupport: disable
+            VpnEcmpSupport: disable
+    MyVpn:
+        Type: AWS::EC2::VPNConnection
+        Properties:
+            CustomerGatewayId: MyUsgGateway
+            StaticRoutesOnly: false
+            TransitGatewayId: MyTGW
+            Type: ipsec.1
+    MyUsgGateway:
+        Type: AWS::EC2::CustomerGateway
+        Properties:
+            BgpAsn: 65000
+            IpAddress_encrypted: ENC[AES256_GCM,data:KRJRsroIs7MFGT9G,iv:dbxBXHeaki7sLTp3n+XDGdcpOgNcSdYKjfXs4uBqAv8=,tag:4uW6QRJ05+xDxEf97E1rGw==,type:str]
+            Type: ipsec.1
+
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    lastmodified: "2021-03-10T10:56:54Z"
+    mac: ENC[AES256_GCM,data:Ijj9OGfpwHhP0KGMuDEV8gT9P5m5h6Ay3Ot6VelNq1irMuJI9NEdmeXsstAj5lgHXIEeGmMvYVfmTqOCD/hUdn5Yz9iQzOCcTrbfq9K6JW3q9agKLYAk7yhLFRokIO52QgRXINaz3p1hbpCK/oZzYSphi4gHt68iUpIdkxnpG6U=,iv:Feu52i7MjlPAt/0mzNbTuzrO7FnIewee4Lw23HBlUdA=,tag:htZ4dr4F/2MUF2+K9JtAlg==,type:str]
+    pgp:
+        - created_at: "2021-03-10T10:56:54Z"
+          enc: |
+              -----BEGIN PGP MESSAGE-----
+
+              hQGMAz+jQNxKaG4mAQwAqZQpo1JgbwzmiMrAF3tzH16zPVwb8YYxivf6YMJmTQjl
+              oyL6Z4pE23yBjkBZP8hETtmwlKkHnprCv4L/22xOHgVgytKp+vO6h1aKPEKfUvcH
+              xdttfwP2ZGHfSLW8u69pIvfxpWfQuayVFGdXGyb/psPNXL32isiRya0e578IQesn
+              1zPLchfanWVQohCzXuGD4MKVKcrDjBYpdtlGpnd658IMIk3yjt35WIVtkpADu7j7
+              w/QPtrA1DxXSPgjgvftfJuWXHUQ7BxpmLYURtkiH8Q37TaNQ67zHUMPmPsRHiIoE
+              GjWp34mlZVahx/2Wg1KLQXbfkkVBgQcwFOAyWK8Q1hdh1IU6VZ8qG0JTTZHZaxpy
+              6w1yFRjclzra/r7DLWBIs4N+aAsyAK3Cg06WqxMTY0MPgafgCBeldI//R7k9+c58
+              blfqV9a9m9KhGtCrjyGBA6IovHvNTcqxHV1fj+CwGnS7ixVyRpfa9qjvMzJO/rtV
+              86LHGejiVm3e2eLJd8q30l4BW7RQVWjS3XetA9zLCYJCR9mGCykKHVVQBS+0WoDM
+              X5YnfdeDiukx9IUFUr3vUCKoG6xjksc5sZeWACuXLkyUcfxslNyf2Mu9rOI5i7AM
+              fm66oGfDl1h1NePcYvXK
+              =7hh1
+              -----END PGP MESSAGE-----
+          fp: 02CE80146F4C097A3F1F2DB808809399F3942EBF
+    encrypted_suffix: _encrypted
+    version: 3.6.1

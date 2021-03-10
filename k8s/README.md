@@ -61,6 +61,8 @@ In this instance I'm using `PUID=911` and `PGID=911`. Create a user/group with t
 
 `adduser --uid 911 k8s`
 
-### Plex discovery
+### Plex
 
 Don't forget to set `Custom server access URLs` and `List of IP addresses and networks that are allowed without auth` in Plex Media Server network settings. Otherwise Plex apps might not connect to PMS.
+
+Make sure to set correct plex claim in `plex.sh`

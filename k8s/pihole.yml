@@ -60,7 +60,7 @@ spec:
             - name: TZ
               value: Europe/Amsterdam
             - name: VIRTUAL_HOST
-              value: pihole.lab.javydekoning.com
+              value: pihole.k8s.javydekoning.com
             - name: WEBPASSWORD
               value: NotMyPassword
           ports:

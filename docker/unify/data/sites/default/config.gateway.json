@@ -36,11 +36,49 @@
                 "mtu": "1492",
                 "name-server": "none",
                 "password": "kpn",
-                "user-id": "XX-XX-XX-XX-XX-XX@internet"
+                "user-id_encrypted": "ENC[AES256_GCM,data:6lKp9g5dmM5m8f6XX5YsC8InpzE1IRBTiU8=,iv:ulg6M3bm/AHGFuI1Qg1ZDvDXtZ89mwNE6ihEccnsDtI=,tag:O39Y97oxUqGME+9OiduTMg==,type:str]"
               }
             }
           }
         }
+      }
+    },
+    "vti": {
+      "vti0": {
+        "address": ["169.254.146.130/30"],
+        "firewall": {
+          "in": {
+            "ipv6-name": "LANv6_IN",
+            "name": "LAN_IN"
+          },
+          "local": {
+            "ipv6-name": "LANv6_LOCAL",
+            "name": "LAN_LOCAL"
+          },
+          "out": {
+            "ipv6-name": "LANv6_OUT",
+            "name": "LAN_OUT"
+          }
+        },
+        "mtu": "1436"
+      },
+      "vti1": {
+        "address": ["169.254.199.158/30"],
+        "firewall": {
+          "in": {
+            "ipv6-name": "LANv6_IN",
+            "name": "LAN_IN"
+          },
+          "local": {
+            "ipv6-name": "LANv6_LOCAL",
+            "name": "LAN_LOCAL"
+          },
+          "out": {
+            "ipv6-name": "LANv6_OUT",
+            "name": "LAN_OUT"
+          }
+        },
+        "mtu": "1436"
       }
     }
   },
@@ -71,12 +109,177 @@
           }
         }
       }
+    },
+    "bgp": {
+      "65000": {
+        "neighbor": {
+          "169.254.146.129": {
+            "remote-as": "64512",
+            "soft-reconfiguration": {
+              "inbound": "''"
+            },
+            "timers": {
+              "holdtime": "30",
+              "keepalive": "10"
+            }
+          },
+          "169.254.199.157": {
+            "remote-as": "64512",
+            "soft-reconfiguration": {
+              "inbound": "''"
+            },
+            "timers": {
+              "holdtime": "30",
+              "keepalive": "10"
+            }
+          }
+        },
+        "parameters": {
+          "router-id_encrypted": "ENC[AES256_GCM,data:4ryBsJvTxW7tFT1j,iv:F72kUYPy8AyIzkRfz477Mr9hEJrUTsHona4Wio3os+A=,tag:LOZdCHse8sHvtCF5mWNv8w==,type:str]"
+        },
+        "redistribute": {
+          "connected": "''"
+        }
+      }
+    }
+  },
+  "vpn": {
+    "ipsec": {
+      "auto-firewall-nat-exclude": "enable",
+      "nat-traversal": "enable",
+      "ipsec-interfaces": {
+        "interface": ["eth0"]
+      },
+      "nat-networks": {
+        "allowed-network": {
+          "0.0.0.0/0": "''"
+        }
+      },
+      "esp-group": {
+        "ESP_34.250.117.73": {
+          "compression": "disable",
+          "lifetime": "3600",
+          "mode": "tunnel",
+          "pfs": "enable",
+          "proposal": {
+            "1": {
+              "encryption": "aes128",
+              "hash": "sha1"
+            }
+          }
+        },
+        "ESP_52.30.228.44": {
+          "compression": "disable",
+          "lifetime": "3600",
+          "mode": "tunnel",
+          "pfs": "enable",
+          "proposal": {
+            "1": {
+              "encryption": "aes128",
+              "hash": "sha1"
+            }
+          }
+        }
+      },
+      "ike-group": {
+        "IKE_34.250.117.73": {
+          "key-exchange": "ikev1",
+          "lifetime": "28800",
+          "mode": "main",
+          "proposal": {
+            "1": {
+              "dh-group": 2,
+              "encryption": "aes128",
+              "hash": "sha1"
+            }
+          },
+          "dead-peer-detection": {
+            "action": "restart",
+            "interval": "15",
+            "timeout": "30"
+          }
+        },
+        "IKE_52.30.228.44": {
+          "key-exchange": "ikev1",
+          "lifetime": "28800",
+          "mode": "main",
+          "proposal": {
+            "1": {
+              "dh-group": 2,
+              "encryption": "aes128",
+              "hash": "sha1"
+            }
+          },
+          "dead-peer-detection": {
+            "action": "restart",
+            "interval": "15",
+            "timeout": "30"
+          }
+        }
+      },
+      "site-to-site": {
+        "peer": {
+          "34.250.117.73": {
+            "authentication": {
+              "mode": "pre-shared-secret",
+              "pre-shared-secret_encrypted": "ENC[AES256_GCM,data:UrSThzE9pp+S4AwL51P1n9Zk7u4+l4YgYr81vuBwTUU=,iv:qee1XemTLM2GpDebbCCJpmBpBXZn0vmumkacTwqzi2Q=,tag:qAP7krB2tfKe3nbJPBJcKQ==,type:str]"
+            },
+            "connection-type": "initiate",
+            "ike-group": "IKE_34.250.117.73",
+            "local-address_encrypted": "ENC[AES256_GCM,data:Z5GyHX3bnrdr6a6l,iv:3C9N+e9b6EIdhFOLLf/y/gCur6ZrMPs05DxnhHqnBEE=,tag:nmpaqiln1OQJbHqZ+Q5OeA==,type:str]",
+            "vti": {
+              "bind": "vti0",
+              "esp-group": "ESP_34.250.117.73"
+            }
+          },
+          "52.30.228.44": {
+            "authentication": {
+              "mode": "pre-shared-secret",
+              "pre-shared-secret_encrypted": "ENC[AES256_GCM,data:WhdigQ/o+lJAlhbG4W7RoVQCos0aKgBLpT3fd3opOoc=,iv:IirjPuVkMr80/5JCo5c26LWDOMm0aeXDUdCwhm/9oAs=,tag:fVx7if0oibcQjT4s9qkp5Q==,type:str]"
+            },
+            "connection-type": "initiate",
+            "ike-group": "IKE_52.30.228.44",
+            "local-address_encrypted": "ENC[AES256_GCM,data:T3ZVOds7jhtWC7qz,iv:H/hnfmbsnoagdeFbAXkbHCXMJD11qrcUxmhMTkxcYpo=,tag:/nz7aRCtneUJrZjLqf50IA==,type:str]",
+            "vti": {
+              "bind": "vti1",
+              "esp-group": "ESP_52.30.228.44"
+            }
+          }
+        }
+      }
     }
   },
   "port-forward": {
     "auto-firewall": "enable",
     "hairpin-nat": "enable",
     "lan-interface": ["eth1"],
+    "rule": {
+      "3001": {
+        "description": "forward-to-service",
+        "forward-to": {
+          "address": "10.96.0.3"
+        },
+        "original-port": "51413",
+        "protocol": "tcp_udp"
+      }
+    },
     "wan-interface": "pppoe2"
+  },
+  "sops": {
+    "kms": null,
+    "gcp_kms": null,
+    "azure_kv": null,
+    "hc_vault": null,
+    "lastmodified": "2021-03-10T11:04:00Z",
+    "mac": "ENC[AES256_GCM,data:pzwYN8IAHiGJKsD97S7vzrB9luOFC0q3AFfVrb9dL7zUgtw5J7zYv2DuoTTGZNalChvZpDokEaVk9+SgaNPy6uDgmDYh/a0qo3Qe3W03ezNholMAgITZkti+aJV9/0+pigzFqsfUXEXaQ8o9OQoYUnfpoVaKZqR0yao1/3PPx5Q=,iv:/DpiEuwORZ+KPTtkjyD3Qn2o2Pk0VCOwhbGwp0nArL4=,tag:QruUJwvZC1A4dikZ5R53VA==,type:str]",
+    "pgp": [
+      {
+        "created_at": "2021-03-10T11:04:00Z",
+        "enc": "-----BEGIN PGP MESSAGE-----\n\nhQGMAz+jQNxKaG4mAQv9FjYVgiUIm06cmUb5OCAAbm5dvAaQgRXQz03w67+e8TSh\nPvTHi8CrAJhru4YSkqTrtW+V1CZltIlSpFeUDUhZvmoyVrhBlFklpWhrQobs+9MS\nQCZ5Qd8GR5F1uPXXRidkqKIKecUe7Fl0F4P5QI75JuYj65tzE5wHceCsjlje7O2f\nlCPsO4mALiahwLA3SUkeVAMNC0DVcR2268PIj2o0BDKgnvL69+g9AP5qQ6uTjmW9\nZ0zlE2DnxvZ74AEEjYvcVO8/XjmsMbaQLuv9Zk5ark0NikYFlemttrwxOAcHGzKP\nJKkWsn6iH8nZMM+PXa3oJPMe1x1pxcT/7XlEbdKQh2thSPSX6jUA9vNi/f32lcB4\nSoYDwAZPnU1mn4mzpWHQzSTUFQgLKT4gAp+VWg2mn7vnKIJ/YExNMJ4K22nsGuY8\nvkqOp0RqPcOe/4Wu1Gmgfka2ctD7m8Md6R+BBYoOZ1ozD14n+DNEYm2wyWB52LEn\nOAh8+Fhegrl7UOmqo7IV0l4BDew4bwl102t367xbYh4bTK0op6p780d9odO1py8M\noPvPc+uc/puePElzT5WV0dVsuiJ4n8PuwAZdgv3YzX6J7vHUyRJ18Dcl7I7mqAVy\nAuqE4Rj7AvxNuq4Umwrd\n=o7PW\n-----END PGP MESSAGE-----\n",
+        "fp": "02CE80146F4C097A3F1F2DB808809399F3942EBF"
+      }
+    ],
+    "encrypted_suffix": "_encrypted",
+    "version": "3.6.1"
   }
 }
