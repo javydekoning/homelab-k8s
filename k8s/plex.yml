@@ -45,12 +45,32 @@ spec:
       labels:
         app: plex
     spec:
+      initContainers:
+        - name: download-plex-plugins
+          image: mcr.microsoft.com/powershell:preview-alpine-3.12
+          securityContext:
+            runAsUser: 911
+            runAsGroup: 911
+          command: ["/opt/microsoft/powershell/7-preview/pwsh"]
+          args:
+            - -Command
+            - |-
+              & {
+                $VerbosePreference = 'Continue'
+                $a = iwr https://github.com/pannal/Sub-Zero.bundle/releases/latest -UseBasicParsing
+                $link = $a.links | ? href -match '/pannal/Sub-Zero.bundle/releases/download/.*Sub-Zero.bundle.*.zip'
+                iwr ('https://github.com' + $link.href) -OutFile /tmp/SubZero.zip
+                Expand-Archive /tmp/SubZero.zip '/config/plex/Library/Application Support/Plex Media Server/Plug-ins/' -f
+                Write-host 'Sub-Zero version:'
+                grep '^Version' '/config/plex/Library/Application Support/Plex Media Server/Plug-ins/Sub-Zero.bundle/Contents/Info.plist'
+              }
+          volumeMounts:
+            - name: downloads
+              mountPath: /config
+              subPath: config
       containers:
         - name: plex
           image: linuxserver/plex
-          # use resources otherwise logs will eat your ephemeral-storage
-          # resulting in root `/` at 100% on nodes and pods becoming
-          # `evicted`
           resources:
             requests:
               memory: "4Gi"
@@ -83,11 +103,14 @@ spec:
               mountPath: /movies
               subPath: movies
             - name: downloads
-              mountPath: /config/
+              mountPath: /config
               subPath: config/plex
             - name: downloads
               mountPath: /tv
               subPath: tv
+            - name: downloads
+              mountPath: /education
+              subPath: education
       volumes:
         - name: downloads
           hostPath:
