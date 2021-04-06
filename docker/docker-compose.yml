@@ -22,7 +22,7 @@ services:
       - PGID=1000
       - MEM_LIMIT=1024M #optional
     volumes:
-      - ./unify:/config
+      - /srv/docker/downloads/config/unify:/config
     ports:
       - 3478:3478/udp
       - 10001:10001/udp
@@ -34,3 +34,15 @@ services:
       - 6789:6789
       - 5514:5514/udp
     restart: unless-stopped
+
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/home-assistant:latest
+    restart: unless-stopped
+    networks:
+      homelan:
+        ipv4_address: 192.168.1.253
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - /srv/docker/downloads/config/homeassistant/:/config
